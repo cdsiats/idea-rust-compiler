@@ -160,4 +160,13 @@ mod lexer_tests {
         assert_eq!(token.token_type, TokenType::AttributeIdentifier);
         assert_eq!(token.raw, "field.text");
     }
+
+    #[test]
+    fn should_tokenize_string_literals() {
+        let mut lexer = Lexer::new("\"Hello\"");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::StringLiteral);
+        assert_eq!(token.raw, "Hello");
+    }
 }
