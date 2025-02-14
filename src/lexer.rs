@@ -136,4 +136,13 @@ mod lexer_tests {
         assert_eq!(token.token_type, TokenType::Identifier);
         assert_eq!(token.raw, "SOMEVARIABLE");
     }
+
+    #[test]
+    fn should_tokenize_attribute() {
+        let mut lexer = Lexer::new("@field.text");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::AttributeIdentifier);
+        assert_eq!(token.raw, "field.text");
+    }
 }
