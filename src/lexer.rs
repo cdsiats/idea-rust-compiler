@@ -87,4 +87,40 @@ mod lexer_tests {
 
         assert_eq!(token.token_type, TokenType::EOF);
     }
+
+    #[test]
+    fn should_tokenize_lower_identifier() {
+        let mut lexer = Lexer::new("somevariable");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Identifier);
+        assert_eq!(token.raw, "somevariable");
+    }
+
+    #[test]
+    fn should_tokenize_camel_case_identifier() {
+        let mut lexer = Lexer::new("someVariable");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Identifier);
+        assert_eq!(token.raw, "somevariable");
+    }
+
+    #[test]
+    fn should_tokenize_pascal_case_identifier() {
+        let mut lexer = Lexer::new("SomeVariable");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Identifier);
+        assert_eq!(token.raw, "somevariable");
+    }
+
+    #[test]
+    fn should_tokenize_uppercase_identifier() {
+        let mut lexer = Lexer::new("SOMEVARIABLE");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Identifier);
+        assert_eq!(token.raw, "SOMEVARIABLE");
+    }
 }

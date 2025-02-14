@@ -9,13 +9,14 @@ pub enum TokenType {
     Model,
 
     // Identifiers
-    Identifier(String),
+    Identifier,
+    AttributeIdentifier,
 
     // Literals
-    String(String),
-    Integer(i64),
-    Float(f64),
-    Boolean(bool),
+    StringLiteral,
+    IntegerLiteral,
+    FloatLiteral,
+    BooleanLiteral,
 
     // Symbols
     OpenParen,
