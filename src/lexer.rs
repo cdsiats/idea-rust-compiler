@@ -42,11 +42,24 @@ impl Lexer {
             Some(']') => Token { token_type: TokenType::CloseSquare, start, end: start + 1, raw: "]".to_string() },
             Some('?') => Token { token_type: TokenType::Optional, start, end: start + 1, raw: "?".to_string() },
             Some('!') => Token { token_type: TokenType::Final, start, end: start + 1, raw: "!".to_string() },
+            Some(c) if c.is_alphanumeric() => self.read_identifier(),
             None => Token { token_type: TokenType::EOF, start, end: start, raw: "".to_string() },
             _ => panic!("Unexpected Token: {}", self.current_char.unwrap()),
         };
         self.advance();
         token
+    }
+
+    fn read_identifier(&mut self) -> Token {
+        let start = self.position;
+        let mut raw = String::new();
+
+        while self.current_char.map_or(false, |c: char| c.is_alphanumeric()){
+            raw.push(self.current_char.unwrap());
+            self.advance();
+        }
+
+        Token { token_type: TokenType::Identifier, start, end: self.position, raw }
     }
 }
 
@@ -103,7 +116,7 @@ mod lexer_tests {
         let token = lexer.next_token();
 
         assert_eq!(token.token_type, TokenType::Identifier);
-        assert_eq!(token.raw, "somevariable");
+        assert_eq!(token.raw, "someVariable");
     }
 
     #[test]
@@ -112,7 +125,7 @@ mod lexer_tests {
         let token = lexer.next_token();
 
         assert_eq!(token.token_type, TokenType::Identifier);
-        assert_eq!(token.raw, "somevariable");
+        assert_eq!(token.raw, "SomeVariable");
     }
 
     #[test]
