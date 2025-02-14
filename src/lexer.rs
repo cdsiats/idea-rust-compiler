@@ -45,9 +45,9 @@ impl Lexer {
             Some(c) if c.is_alphabetic() => self.read_identifier(),
             Some('@') if self.peek().unwrap().is_alphabetic() => self.read_attribute(),
             Some('"') => self.read_string(),
-            Some(c) if c.is_digit(10) => self.read_integer(),
+            Some(c) if c.is_digit(10) => self.read_number(),
             // If the char is a negative sign and the next char is a number 
-            Some('-') if self.peek().map_or(false, |c: char| c.is_digit(10))  => self.read_integer(),
+            Some('-') if self.peek().map_or(false, |c: char| c.is_digit(10))  => self.read_number(),
             None => Token { token_type: TokenType::EOF, start, end: start, raw: "".to_string() },
             _ => panic!("Unexpected Token: {}", self.current_char.unwrap()),
         };
@@ -95,7 +95,7 @@ impl Lexer {
         Token { token_type: TokenType::StringLiteral, start, end: self.position, raw }
     }
 
-    fn read_integer(&mut self) -> Token {
+    fn read_number(&mut self) -> Token {
         let start = self.position;
         let mut raw = String::new();
 
@@ -107,6 +107,17 @@ impl Lexer {
         while self.current_char.map_or(false, |c: char| c.is_digit(10)) {
             raw.push(self.current_char.unwrap());
             self.advance();
+        }
+
+        if self.current_char == Some('.') {
+            raw.push(self.current_char.unwrap());
+            self.advance();
+
+            while self.current_char.map_or(false, |c: char| c.is_digit(10)) {
+                raw.push(self.current_char.unwrap());
+                self.advance();
+            }
+            return Token {token_type: TokenType::FloatLiteral, start, end: self.position, raw}
         }
 
         Token { token_type: TokenType::IntegerLiteral, start, end: self.position, raw }
@@ -221,5 +232,23 @@ mod lexer_tests {
 
         assert_eq!(token.token_type, TokenType::IntegerLiteral);
         assert_eq!(token.raw, "-12345");
+    }
+
+    #[test]
+    fn should_tokenize_floats() {
+        let mut lexer = Lexer::new("123.45");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::FloatLiteral);
+        assert_eq!(token.raw, "123.45");
+    }
+
+    #[test]
+    fn should_tokenize_negative_floats() {
+        let mut lexer = Lexer::new("-123.45");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::FloatLiteral);
+        assert_eq!(token.raw, "-123.45");
     }
 }
