@@ -43,6 +43,7 @@ impl Lexer {
             Some('?') => Token { token_type: TokenType::Optional, start, end: start + 1, raw: "?".to_string() },
             Some('!') => Token { token_type: TokenType::Final, start, end: start + 1, raw: "!".to_string() },
             Some(c) if c.is_alphanumeric() => self.read_identifier(),
+            Some('@') if self.peek().unwrap().is_alphabetic() => self.read_attribute(),
             None => Token { token_type: TokenType::EOF, start, end: start, raw: "".to_string() },
             _ => panic!("Unexpected Token: {}", self.current_char.unwrap()),
         };
@@ -60,6 +61,20 @@ impl Lexer {
         }
 
         Token { token_type: TokenType::Identifier, start, end: self.position, raw }
+    }
+
+    fn read_attribute(&mut self) -> Token {
+        let start = self.position;
+        // Skips '@' symbol
+        self.advance();
+        let mut raw = String::new();
+
+        while self.current_char.map_or(false, |c: char| c.is_alphabetic() || c == '.') {
+            raw.push(self.current_char.unwrap());
+            self.advance();
+        }
+
+        Token { token_type: TokenType::AttributeIdentifier, start, end: self.position, raw }
     }
 }
 
