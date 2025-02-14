@@ -64,7 +64,17 @@ impl Lexer {
             self.advance();
         }
 
-        Token { token_type: TokenType::Identifier, start, end: self.position, raw }
+        let token_type = match raw.as_str() {
+            "plugin" => TokenType::Plugin,
+            "prop" => TokenType::Prop,
+            "enum" => TokenType::Enum,
+            "model" => TokenType::Model,
+            "type" => TokenType::Type,
+            "use" => TokenType::Use,
+            _ => TokenType::Identifier,
+        };
+
+        Token { token_type, start, end: self.position, raw }
     }
 
     fn read_attribute(&mut self) -> Token {
@@ -250,5 +260,59 @@ mod lexer_tests {
 
         assert_eq!(token.token_type, TokenType::FloatLiteral);
         assert_eq!(token.raw, "-123.45");
+    }
+
+    #[test]
+    fn should_tokenize_plugin() {
+        let mut lexer = Lexer::new("plugin");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Plugin);
+        assert_eq!(token.raw, "plugin");
+    }
+
+    #[test]
+    fn should_tokenize_prop() {
+        let mut lexer = Lexer::new("prop");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Prop);
+        assert_eq!(token.raw, "prop");
+    }
+
+    #[test]
+    fn should_tokenize_use() {
+        let mut lexer = Lexer::new("use");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Use);
+        assert_eq!(token.raw, "use");
+    }
+
+    #[test]
+    fn should_tokenize_type() {
+        let mut lexer = Lexer::new("type");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Type);
+        assert_eq!(token.raw, "type");
+    }
+
+    #[test]
+    fn should_tokenize_model() {
+        let mut lexer = Lexer::new("model");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Model);
+        assert_eq!(token.raw, "model");
+    }
+
+    #[test]
+    fn should_tokenize_enum() {
+        let mut lexer = Lexer::new("enum");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::Enum);
+        assert_eq!(token.raw, "enum");
     }
 }

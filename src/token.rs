@@ -7,6 +7,7 @@ pub enum TokenType {
     Use,
     Type,
     Model,
+    Enum,
 
     // Identifiers
     Identifier,
