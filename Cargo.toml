@@ -1,0 +1,11 @@
+[package]
+name = "idea-rust-compiler"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+
+[lib]
+name = "idea_rust_compiler"
+crate-type = ["cdylib", "rlib"]
