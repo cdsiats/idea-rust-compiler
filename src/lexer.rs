@@ -184,4 +184,22 @@ mod lexer_tests {
         assert_eq!(token.token_type, TokenType::StringLiteral);
         assert_eq!(token.raw, "Hello");
     }
+
+    #[test]
+    fn should_tokenize_integers() {
+        let mut lexer = Lexer::new("12345");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::IntegerLiteral);
+        assert_eq!(token.raw, "12345");
+    }
+
+    #[test]
+    fn should_tokenize_negative_integers() {
+        let mut lexer = Lexer::new("-12345");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::IntegerLiteral);
+        assert_eq!(token.raw, "-12345");
+    }
 }
