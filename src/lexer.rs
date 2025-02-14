@@ -79,4 +79,12 @@ mod lexer_tests {
             assert_eq!(token.raw, expected_token.raw);
         }
     }
+
+    #[test]
+    fn should_tokenize_empty_input() {
+        let mut lexer = Lexer::new("");
+        let token = lexer.next_token();
+
+        assert_eq!(token.token_type, TokenType::EOF);
+    }
 }
